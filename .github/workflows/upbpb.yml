@@ -29,8 +29,9 @@ jobs:
           echo "TARGET_FILE=worker.zip" >> $GITHUB_ENV
 
       - name: 检查并更新 Worker
+        id: check_update  # 添加ID以便引用输出
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # 使用 GitHub Token 认证
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # 日志函数
           log() { echo "[$(date +'%Y-%m-%d %H:%M:%S')] $1"; }
@@ -49,8 +50,13 @@ jobs:
             exit 1
           fi
 
+          # 提取版本信息
           TAG_NAME=$(echo "$RESPONSE" | jq -r '.[0].tag_name')
           DOWNLOAD_URL=$(echo "$RESPONSE" | jq -r '.[0].assets[] | select(.name == "'"$TARGET_FILE"'") | .browser_download_url')
+
+          # 输出版本号供后续步骤使用
+          echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
+          echo "local_version=$LOCAL_VERSION" >> $GITHUB_OUTPUT
 
           if [ -z "$DOWNLOAD_URL" ] || [ "$DOWNLOAD_URL" == "null" ]; then
             log "ERROR: 未找到 $TARGET_FILE"
