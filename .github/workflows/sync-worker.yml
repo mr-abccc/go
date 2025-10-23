@@ -4,7 +4,11 @@ on:
   schedule:
     - cron: '*/15 * * * *'  # 每隔15分钟执行一次
   workflow_dispatch:  # 允许手动触发
-
+    inputs:
+      force_update:
+        description: '是否强制更新（忽略版本检查）'
+        required: false
+        default: 'false'
 jobs:
   sync-script:
     runs-on: ubuntu-latest
