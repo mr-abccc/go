@@ -2,7 +2,7 @@ name: Sync Worker Script
 
 on:
   schedule:
-    - cron: '*/15 * * * *'  # 每隔15分钟执行一次
+    - cron:  '0 */4 * * *'  # 每隔4小时执行一次（整点执行）
   workflow_dispatch:  # 允许手动触发
     inputs:
       force_update:
