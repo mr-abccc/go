@@ -1,0 +1,40 @@
+name: Sync Worker Script
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'  # 每隔15分钟执行一次
+  workflow_dispatch:  # 允许手动触发
+
+jobs:
+  sync-script:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout your repository
+        uses: actions/checkout@v4
+
+      - name: Fetch target file
+        run: |
+          # 从目标仓库获取"少年你相信光吗"文件内容并写入worker.js
+          curl -sL "https://raw.githubusercontent.com/byJoey/cfnew/main/少年你相信光吗" -o worker.js
+          
+          # 检查文件是否获取成功
+          if [ ! -s "worker.js" ]; then
+            echo "Error: Failed to fetch the target file"
+            exit 1
+          fi
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name 'GitHub Actions Bot'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          
+          # 检查是否有变化
+          if git diff --quiet worker.js; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          
+          # 提交并推送更改
+          git add worker.js
+          git commit -m "Sync worker script from byJoey/cfnew at $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+          git push
