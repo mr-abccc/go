@@ -1,0 +1,3 @@
+name = "onec"  # 替换为你的 Worker 名称
+compatibility_date = "2025-10-23"  # 替换为当前日期或兼容日期
+main = "worker.js"  # 明确指定入口文件
